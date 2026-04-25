@@ -1,5 +1,5 @@
 {
-  "name": "theonaegor-claude-plugins",
+  "name": "claude-plugins",
   "version": "1.0.0",
   "description": "Code review, unit test generation, and documentation skills with automatic platform detection",
   "author": {
