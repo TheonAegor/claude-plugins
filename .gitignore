@@ -1,0 +1,5 @@
+# skill-creator eval workspace (test outputs, gradings, benchmarks — not source)
+skills/*-workspace/
+
+# claude-mem auto-generated context files
+**/CLAUDE.md

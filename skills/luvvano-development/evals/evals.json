@@ -1,0 +1,26 @@
+{
+  "skill_name": "luvvano-development",
+  "evals": [
+    {
+      "id": 1,
+      "name": "add-list-properties-endpoint",
+      "prompt": "I'm working in luvento-back (cloned at /Users/egorproskyrin/Projects/luvano/luvento-back). I need to add a new gRPC method ListUserProperties to the property service that returns all properties owned by a specific user. Take a user_uuid in the request, return a list of properties. Please write the storage query, the service method, and the handler. Also add a basic unit test for the service that uses mocks. Assume the proto ListUserPropertiesRequest/Response already exists in github.com/luvvano/common/protobuf — just use it. Don't run anything, just produce the code as separate files I can paste into the repo.",
+      "expected_output": "Storage method using goqu, service method delegating with logger, handler mapping proto and using status.Errorf, unit test using mockery + testify with table-driven structure. No raw SQL, no global zap logger, no direct *sqlx.DB in handler.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "add-mark-as-read-method",
+      "prompt": "In notification-service (at /Users/egorproskyrin/Projects/luvano/notification-service) I need a new MarkAsRead method on the in-app notification flow. It should take a notification_id and a user_uuid, then flip the read flag in the DB. Follow the existing patterns in this service — I want the storage method, service method, and gRPC handler. The proto MarkAsReadRequest with notification_id and user_uuid already exists in github.com/luvvano/common/protobuf/notification-service/v1/gen/go. Don't run anything, just produce the code as separate files.",
+      "expected_output": "Storage uses sqlx + goqu Update with WHERE on both id and user_uuid, service is thin delegation with zap.Logger field, handler validates inputs and maps errors to status codes (NotFound when zero rows, InvalidArgument on bad UUID). No raw SQL, no GORM, no global logger.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "review-bad-handler-code",
+      "prompt": "Can you review this draft code from a luvento-back PR and tell me what's wrong with it? Be specific about what should be fixed and why. Here's the file:\n\n```go\n// internal/handler/booking.go\npackage handler\n\nimport (\n    \"context\"\n    \"fmt\"\n\n    \"github.com/jmoiron/sqlx\"\n    \"github.com/google/uuid\"\n    \"go.uber.org/zap\"\n    pb \"github.com/luvvano/common/protobuf/luvento-back/v1/gen/go\"\n)\n\ntype BookingHandler struct {\n    pb.UnimplementedBookingServiceServer\n    db *sqlx.DB\n}\n\nfunc (h *BookingHandler) DeleteBooking(ctx context.Context, req *pb.DeleteBookingRequest) (*pb.DeleteBookingResponse, error) {\n    log := zap.NewProduction()\n    bookingID, _ := uuid.Parse(req.GetBookingId())\n\n    tx, _ := h.db.BeginTxx(ctx, nil)\n    defer tx.Rollback()\n\n    _, err := tx.ExecContext(ctx, fmt.Sprintf(\"DELETE FROM bookings WHERE id = '%s'\", bookingID))\n    if err != nil {\n        log.Sugar().Errorf(\"delete failed: %v\", err)\n        return nil, err\n    }\n    tx.Commit()\n    return &pb.DeleteBookingResponse{}, nil\n}\n```\n\nGive me a numbered list of issues. Don't rewrite the code — just identify the problems.",
+      "expected_output": "Should identify at least: (1) handler holds *sqlx.DB directly instead of going through service+storage layers, (2) zap logger built fresh inside the method instead of injected via constructor, (3) UUID parse error swallowed, (4) BeginTxx error swallowed, (5) raw SQL with fmt.Sprintf — SQL injection AND not using goqu, (6) raw error returned without status.Errorf mapping, (7) tx.Commit error not checked, (8) sugared logger inconsistent with rest of codebase (or: use structured zap fields not Sprintf), (9) bypasses TransactionManager.",
+      "files": []
+    }
+  ]
+}
