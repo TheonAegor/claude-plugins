@@ -1,0 +1,14 @@
+{
+  "name": "theonaegor-claude-plugins",
+  "version": "1.0.0",
+  "owner": {
+    "name": "TheonAegor"
+  },
+  "plugins": [
+    {
+      "name": "claude-plugins",
+      "version": "1.0.0",
+      "source": "./"
+    }
+  ]
+}
