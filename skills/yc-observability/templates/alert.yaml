@@ -1,0 +1,63 @@
+# YC Monitoring alert config — source of truth for an alert in the YC Web UI.
+#
+# This YAML is NOT auto-deployed. YC Monitoring does not expose a public API
+# for alerts (verified 2026-05). The workflow is:
+#   1. Fill in this file.
+#   2. Verify `query` returns data via scripts/yc-query.sh.
+#   3. Create the alert in YC Web UI using these fields as a checklist.
+#   4. Save the assigned `yc_alert_id` back into this file.
+#
+# Drop this file at e.g. `alerts/<service>-<symptom>.yaml` in your repo.
+
+# Human-readable identity (must be unique within the folder)
+name: example-service-5xx-rate
+service: example-service
+symptom: high 5xx rate
+
+# YC location
+folder_id: ""              # required, the folder where metrics live
+yc_alert_id: ""            # filled in after first UI create, do not edit by hand
+
+# Documentation — surfaces in reviews and runbook follow-ups
+description: |
+  What this alert means in plain words.
+  Why it pages (or doesn't).
+  Most common causes.
+
+# SeleQL — verify with scripts/yc-query.sh before pasting into UI
+query: |
+  100 *
+    series_sum(non_negative_derivative("example_service.http_requests_total"{service="custom", code="5*"}))
+  /
+    series_sum(non_negative_derivative("example_service.http_requests_total"{service="custom"}))
+
+evaluation:
+  window: 10m              # YC "evaluation window"
+  delay:  0s               # YC "evaluation delay"
+
+# YC thresholds. Use comparison operators in YC: >, >=, <, <=, ==, !=
+# Severity names follow YC's own conventions: alarm/warn.
+thresholds:
+  critical: ">= 5"         # 5% over 10min
+  warning:  ">= 1"         # 1% over 10min
+
+# Notification channels — names must match existing YC channels in the folder
+notifications:
+  - channel: ""
+    severity: critical
+  - channel: ""
+    severity: warning
+
+# Free-form key/value labels attached to the alert in YC. Used for routing
+# in downstream notifiers, runbook discovery, dashboards linking.
+annotations:
+  runbook: ""              # docs/runbooks/<file>.md or wiki URL
+  dashboard: ""            # YC dashboard URL most useful for triage
+  owner: ""                # team or @user
+
+# Evidence that the query actually returns data. Updated by yc-query.sh.
+# Reviewers should reject the PR if this is empty.
+query_verification:
+  last_verified: ""        # RFC3339 UTC
+  sample_value: ""         # the last non-NaN value when verified
+  window_used: ""          # e.g. "1h"

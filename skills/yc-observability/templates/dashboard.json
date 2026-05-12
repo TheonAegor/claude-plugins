@@ -1,0 +1,26 @@
+{
+  "title": "Example dashboard",
+  "description": "Replace this with what the dashboard is for.",
+  "widgets": [
+    {
+      "position": {"x": 0, "y": 0, "w": 12, "h": 6},
+      "chart": {
+        "title": "HTTP request rate (req/s)",
+        "displayLegend": true,
+        "queries": {
+          "targets": [
+            {
+              "query": "series_sum(non_negative_derivative(\"example_service.http_requests_total\"{service=\"custom\"}))",
+              "textMode": true,
+              "hidden": false
+            }
+          ]
+        },
+        "visualizationSettings": {
+          "type": "VISUALIZATION_TYPE_LINE",
+          "interpolate": "INTERPOLATE_LINEAR"
+        }
+      }
+    }
+  ]
+}
