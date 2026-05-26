@@ -1,6 +1,6 @@
 # claude-ai-onboarding
 
-Claude Code plugin with code review, unit test generation, and documentation writing skills. Automatically detects your project's platform (Go, Android, iOS, Web, QA) and applies platform-specific patterns.
+Claude Code plugin with code review, unit test generation, documentation writing, and web visual-verify skills. Automatically detects your project's platform (Go, Android, iOS, Web, QA) and applies platform-specific patterns.
 
 ## Installation
 
@@ -19,6 +19,7 @@ Claude Code plugin with code review, unit test generation, and documentation wri
 | `/review` | "review code", "do a code review" | Reviews code changes (CI mode for PRs, local mode for git diff) |
 | `/write-unit-tests` | "write tests", "add test coverage" | Generates unit tests file-by-file with coverage targets |
 | `/doc-write` | "write docs", "update README" | Writes/updates documentation following reader-first approach |
+| `/web-visual-verify` | "verify the UI", "screenshot the app", "smoke test the page" | Drives a real browser with Playwright, mocks auth + REST API, takes screenshots — useful when type-check passes but you need to *see* a UI change |
 
 ## Rules
 

@@ -1,0 +1,78 @@
+{
+  "_comment": "Worked example: screenshots the /calendar page of the Luvento SPA. Copy this file into your project, replace fixtures + apiMatch + localStorage with your app's, and run: node screenshot-spa.mjs --config this.json --out /tmp/shot.png",
+
+  "baseUrl": "http://localhost:5173",
+  "path": "/calendar",
+  "viewport": { "width": 1400, "height": 800 },
+  "settleMs": 800,
+  "fullPage": false,
+
+  "localStorage": {
+    "access_token": "x",
+    "refresh_token": "y",
+    "token_expiry": "{{NOW_MS_PLUS_1D}}",
+    "luvento_onboarding": "{\"completedTours\":[\"welcome\",\"calendar\",\"properties\"],\"skippedTours\":[\"welcome\",\"calendar\",\"properties\"]}",
+    "luvento_onboarding_skipped": "true"
+  },
+
+  "apiMatch": "/api/v[12]/|:8081|:8085",
+
+  "ignoreConsoleErrors": [
+    "<div> cannot be a child of <tr>",
+    "validateDOMNesting"
+  ],
+
+  "routes": [
+    {
+      "match": "/api/v2/properties",
+      "body": {
+        "properties": [
+          { "uuid": "p1", "name": "Студия в центре", "address": "ул. Ленина 1", "sourceId": 1, "type": 1, "country": "RU", "city": "Москва", "basePrice": 3000, "priceSettings": { "day": 3000 } },
+          { "uuid": "p2", "name": "Квартира у моря", "address": "ул. Морская 2", "sourceId": 1, "type": 1, "country": "RU", "city": "Сочи", "basePrice": 5000, "priceSettings": { "day": 5000 } },
+          { "uuid": "p3", "name": "Лофт на крыше", "address": "ул. Высокая 3", "sourceId": 1, "type": 1, "country": "RU", "city": "Москва", "basePrice": 8000, "priceSettings": { "day": 8000 } }
+        ]
+      }
+    },
+    { "match": "/api/v1/bookings", "body": { "bookings": [] } },
+    { "match": "/api/v1/user/subscription", "body": { "is_trial_active": true, "days_remaining": 7 } },
+    { "match": "/api/v1/pricing", "body": { "plans": [] } }
+  ],
+
+  "fallback": {
+    "channels": [], "sources": [], "properties": [], "bookings": [], "steps": [],
+    "notifications": [], "items": [], "data": [], "count": 0, "unreadCount": 0, "error": null,
+    "completed_count": 0, "total_count": 0, "all_completed": false,
+    "config": { "support": { "telegram": { "link": "" } } }
+  },
+
+  "wait": [
+    { "selector": "h1:has-text(\"Календарь\")" },
+    { "selector": "table" },
+    { "selector": "tbody tr:nth-child(3)" }
+  ],
+
+  "actions": [
+    {
+      "name": "openLegend",
+      "steps": [
+        { "click": "button[aria-label=\"Что обозначают цвета\"]" },
+        { "waitForSelector": "text=Обозначения" },
+        { "wait": 200 }
+      ]
+    },
+    {
+      "name": "emptySearch",
+      "steps": [
+        { "fill": { "selector": "input[type=\"search\"]", "value": "абракадабра" } },
+        { "waitForSelector": "text=Ничего не найдено" }
+      ]
+    },
+    {
+      "name": "scrollForward",
+      "steps": [
+        { "press": "ArrowRight" },
+        { "wait": 600 }
+      ]
+    }
+  ]
+}

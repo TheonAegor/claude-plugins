@@ -1,7 +1,7 @@
 {
   "name": "claude-plugins",
-  "version": "1.0.0",
-  "description": "Code review, unit test generation, and documentation skills with automatic platform detection",
+  "version": "1.1.0",
+  "description": "Code review, unit test generation, documentation, and web visual-verify skills with automatic platform detection",
   "author": {
     "name": "TheonAegor"
   },
